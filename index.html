@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Simple Contact Form</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Contact Form with Firebase</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -38,12 +38,47 @@
 <body>
   <div class="container">
     <h2>Contact Us</h2>
-    <form>
-      <input type="text" placeholder="Your Name" required />
-      <input type="email" placeholder="Your Email" required />
-      <textarea placeholder="Your Message" rows="5" required></textarea>
+    <form id="contactForm">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Your Email" required />
+      <textarea id="message" placeholder="Your Message" rows="5" required></textarea>
       <button type="submit">Send</button>
     </form>
+    <p id="status"></p>
   </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+
+      db.collection("contacts").add({ name, email, message })
+        .then(() => {
+          document.getElementById('status').innerText = "Message sent successfully!";
+        })
+        .catch((error) => {
+          document.getElementById('status').innerText = "Error: " + error.message;
+        });
+
+      document.getElementById('contactForm').reset();
+    });
+  </script>
 </body>
 </html>
